@@ -78,10 +78,10 @@
 #endif
 
 /*
- * Align to a 32 byte boundary equal to the
- * alignment gcc 4.5 uses for a struct
+ * Align to a 64 byte boundary equal to the
+ * alignment clang 18 uses for a struct
  */
-#define STRUCT_ALIGNMENT 32
+#define STRUCT_ALIGNMENT 64
 #define STRUCT_ALIGN() . = ALIGN(STRUCT_ALIGNMENT)
 
 /* The actual configuration determine if the init/exit sections
