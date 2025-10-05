@@ -138,9 +138,8 @@ vmlinux_link()
 		local ld=${LD}
 		local ldflags="${LDFLAGS} ${LDFLAGS_vmlinux}"
 
-		if [ -n "${LDFINAL_vmlinux}" ]; then
-			ld=${LDFINAL_vmlinux}
-			ldflags="${LDFLAGS_FINAL_vmlinux} ${LDFLAGS_vmlinux}"
+		if [ -n "${CONFIG_LTO_CLANG}" ]; then
+			ldflags="${LDFLAGS_vmlinux}"
 		fi
 
 		if [[ -n "${CONFIG_THIN_ARCHIVES}" && -z "${CONFIG_LTO_CLANG}" ]]; then
