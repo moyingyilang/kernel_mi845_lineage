@@ -367,6 +367,13 @@ static inline bool is_prctl_valid(int option)
 int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 		     unsigned long arg4, unsigned long arg5)
 {
+#ifdef CONFIG_KSU_SUSFS
+	// - We straight up check if process is supposed to be umounted, return 0 if so
+	// - This is to prevent side channel attack as much as possible
+	if (likely(susfs_is_current_proc_umounted())) {
+		return 0;
+	}
+#endif
 	// if success, we modify the arg5 as result!
 	u32 *result = (u32 *)arg5;
 	u32 reply_ok = KERNEL_SU_OPTION;
@@ -1155,6 +1162,15 @@ int ksu_handle_setuid(struct cred *new, const struct cred *old)
 	// Check if spawned process is isolated service first, and force to do umount if so  
 	if (is_zygote_isolated_service_uid(new_uid.val) && susfs_is_umount_for_zygote_iso_service_enabled) {
 		goto do_umount;
+	}
+
+	// - Since ksu maanger app uid is excluded in allow_list_arr, so ksu_uid_should_umount(manager_uid)
+	// - will always return true, that's why we need to explicitly check if new_uid.val belongs to
+	// ksu manager
+	if (ksu_is_manager_uid_valid() &&
+			(new_uid.val % 1000000 == ksu_get_manager_uid())) // % 1000000 in case it is private space uid
+	{
+		return 0;
 	}
 
 	// Check if spawned process is normal user app and needs to be umounted
