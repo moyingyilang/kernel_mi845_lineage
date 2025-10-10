@@ -56,7 +56,7 @@ archive_builtin()
 
 		if [ -n "${CONFIG_LTO_CLANG}" ]; then
 			mv -f built-in.o built-in.o.tmp
-			${LLVM_AR} rcsT${KBUILD_ARFLAGS} built-in.o $(${AR} t built-in.o.tmp)
+			${AR} rcsT${KBUILD_ARFLAGS} built-in.o $(${AR} t built-in.o.tmp)
 			rm -f built-in.o.tmp
 		fi
 	fi
