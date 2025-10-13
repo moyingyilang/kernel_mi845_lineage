@@ -5,9 +5,6 @@
 # A mix between the arm64 and arm vDSO Makefiles.
 
 CC_ARM32 := $(CC) --target=arm-linux-gnueabi
-ifneq ($(LLVM_IAS),1)
-  CC_ARM32 += -no-integrated-as
-endif
 
 # Same as cc-*option, but using CC_ARM32 instead of CC
 cc32-option = $(call try-run,\
@@ -62,8 +59,8 @@ VDSO_CFLAGS += -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
                -fno-strict-aliasing -fno-common \
                -Werror-implicit-function-declaration \
                -Wno-format-security \
-               -std=gnu89
-VDSO_CFLAGS  += -O2
+               -std=gnu11
+VDSO_CFLAGS  += -O3
 # Some useful compiler-dependent flags from top-level Makefile
 VDSO_CFLAGS += $(call cc32-option,-Wdeclaration-after-statement,)
 VDSO_CFLAGS += $(call cc32-option,-Wno-pointer-sign)
