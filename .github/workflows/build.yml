@@ -9,7 +9,6 @@ on:
 env:
   AOSP_TOOLCHAIN_BRANCH: android16
   AOSP_CLANG_VERSION: r547379
-  KERNEL_LOCALVERSION: awkoo
 
 jobs:
   build:
@@ -67,14 +66,10 @@ jobs:
         working-directory: kernel
         env:
           MAKE_ARGS:
-            O=out LLVM=1 LLVM_IAS=1 ARCH=arm64
-            -sj$(nproc --all) CC="ccache clang"
-            CROSS_COMPILE=aarch64-linux-gnu-
-            CROSS_COMPILE_ARM32=arm-linux-gnueabi-
-            LOCALVERSION=-${{ env.KERNEL_LOCALVERSION }}
+            O=out -sj$(nproc --all) CC="ccache clang"
           CONFIG_FILES:
-            vendor/xiaomi/mi845_defconfig
-            vendor/xiaomi/${{ matrix.device }}.config
+            mi845_defconfig
+            ${{ matrix.device }}.config
         run: |
           export PATH=$GITHUB_WORKSPACE/clang/bin:$PATH
           make ${{ env.MAKE_ARGS }} ${{ env.CONFIG_FILES }} all
